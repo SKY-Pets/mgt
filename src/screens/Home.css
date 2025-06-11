@@ -1,0 +1,26 @@
+.shake-animation {
+  border: 1px solid #ea1e1e;
+    animation: tambalea 1s ease-in-out infinite;
+  }
+  
+  @keyframes tambalea {
+    0% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(5deg);
+    }
+    50% {
+      transform: rotate(-5deg);
+    }
+    75% {
+      transform: rotate(5deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  
+  .tambalea:hover {
+    animation: none;
+  }  

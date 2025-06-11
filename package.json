@@ -1,0 +1,41 @@
+{
+  "name": "mgt",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource/lato": "^5.2.5",
+    "@fontsource/poppins": "^5.2.5",
+    "@fontsource/roboto": "^5.0.13",
+    "@lottiefiles/react-lottie-player": "^3.5.4",
+    "@mui/icons-material": "^5.16.4",
+    "@mui/material": "^5.17.1",
+    "@mui/x-date-pickers": "^7.17.0",
+    "dayjs": "^1.11.13",
+    "emailjs-com": "^3.2.0",
+    "firebase": "^11.4.0",
+    "framer-motion": "^12.6.3",
+    "lottie-react": "^2.4.0",
+    "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dom": "^18.3.1",
+    "react-material-ui-carousel": "^3.4.2",
+    "react-responsive-carousel": "^3.2.23",
+    "react-router-dom": "^6.26.0",
+    "recharts": "^2.15.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.8"
+  }
+}

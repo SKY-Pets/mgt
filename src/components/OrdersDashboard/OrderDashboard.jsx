@@ -1,0 +1,65 @@
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, Typography, Button, Grid, List, ListItem, ListItemText, Checkbox } from "@mui/material";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+
+const OrdersDashboard = ({ orders }) => {
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10)); // Fecha actual
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [pendingOrders, setPendingOrders] = useState([]);
+
+  useEffect(() => {
+    const dateFiltered = orders.filter(order => order.orderDate === selectedDate);
+    const pending = orders.filter(order => order.status === "pending");
+    setFilteredOrders(dateFiltered);
+    setPendingOrders(pending);
+  }, [orders, selectedDate]);
+
+  const markAsDelivered = (orderId) => {
+    setPendingOrders(prev => prev.filter(order => order.orderId !== orderId));
+  };
+
+  const dailyData = orders.reduce((acc, order) => {
+    const day = order.orderDate;
+    acc[day] = (acc[day] || 0) + order.totalPrice;
+    return acc;
+  }, {});
+
+  const chartData = Object.entries(dailyData).map(([date, total]) => ({ date, total }));
+
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Typography variant="h5">Pedidos para la fecha: {selectedDate}</Typography>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData}>
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="total" fill="#8884d8" onClick={(data) => setSelectedDate(data.date)} />
+          </BarChart>
+        </ResponsiveContainer>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Card>
+          <CardContent>
+            <Typography variant="h6">Pedidos no entregados</Typography>
+            <List>
+              {pendingOrders.map((order) => (
+                <ListItem key={order.orderId} disablePadding>
+                  <Checkbox onClick={() => markAsDelivered(order.orderId)} />
+                  <ListItemText
+                    primary={`Pedido #${order.orderId} - ${order.customerName}`}
+                    secondary={`Total: $${order.totalPrice}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default OrdersDashboard;

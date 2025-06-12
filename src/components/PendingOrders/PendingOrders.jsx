@@ -12,7 +12,7 @@ import {
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 const PendingOrders = ({ orders }) => {
-  const pendingOrders = orders.filter((order) => order.status === "pending");
+  const pendingOrders = orders
 
   return (
     <Box sx={{ marginTop: 4 }}>

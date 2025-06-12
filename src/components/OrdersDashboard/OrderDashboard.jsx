@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, Typography, Button, Grid, List, ListItem, ListItemText, Checkbox } from "@mui/material";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { markOrderAsDelivered } from "../../api/api";
+import { updateOrderStatus } from "../../api/api";
 
 const OrdersDashboard = ({ orders }) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10)); // Fecha actual
@@ -16,17 +16,12 @@ const OrdersDashboard = ({ orders }) => {
   }, [orders, selectedDate]);
 
   const markAsDelivered = (orderId) => {
-    markOrderAsDelivered(orderId)
+    updateOrderStatus(orderId, "delivered")
       .then(() => {
-        const updatedOrders = filteredOrders.map(order => {
-          if (order.id === orderId) {
-            return { ...order, status: "entregado" };
-          }
-          return order;
-        });
-        setFilteredOrders(updatedOrders);
-      })
-      .catch(err => console.error("Error al actualizar el pedido:", err)); // Manejar el error si es necesario
+        // Actualizar la lista de pedidos pendientes
+        setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
+    })
+      .catch((err) => console.error("Error updating order status:", err));
   };
   
 

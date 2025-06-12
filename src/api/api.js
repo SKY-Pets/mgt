@@ -1,6 +1,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-// Obtener products desde la API
+// Obtener productos desde la API
 export const getProducts = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/products`);
@@ -13,11 +13,12 @@ export const getProducts = async () => {
     throw error;
   }
 };
+
 // Filtrar pedidos por fechas y estado
 export const filterOrders = async (startDate, endDate, status) => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/orders/filter?startDate=${startDate}&endDate=${endDate}&status=${status}`
+      status != "" ? `${API_BASE_URL}/orders/filter?startDate=${startDate}&endDate=${endDate}` : `${API_BASE_URL}/orders/filter?startDate=${startDate}&endDate=${endDate}`
     );
     if (!response.ok) {
       throw new Error(`Error fetching filtered orders: ${response.statusText}`);
@@ -85,7 +86,7 @@ export const deleteProduct = async (productId) => {
   }
 };
 
-// Obtener orders desde la API
+// Obtener pedidos desde la API
 export const getOrders = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/orders`);
@@ -99,22 +100,22 @@ export const getOrders = async () => {
   }
 };
 
-// Actualizar un pedido como entregado
-export const markOrderAsDelivered = async (orderId) => {
+// Actualizar el estado de un pedido
+export const updateOrderStatus = async (orderId, status) => {
   try {
     const response = await fetch(`${API_BASE_URL}/orders/id/${orderId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ estado: "entregado" }),
+      body: JSON.stringify({ estado: status }),
     });
     if (!response.ok) {
-      throw new Error(`Error updating order: ${response.statusText}`);
+      throw new Error(`Error updating order status: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
-    console.error("Error updating order:", error);
+    console.error("Error updating order status:", error);
     throw error;
   }
 };

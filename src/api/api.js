@@ -13,6 +13,21 @@ export const getProducts = async () => {
     throw error;
   }
 };
+// Filtrar pedidos por fechas y estado
+export const filterOrders = async (startDate, endDate, status) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/orders/filter?startDate=${startDate}&endDate=${endDate}&status=${status}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error fetching filtered orders: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching filtered orders:", error);
+    throw error;
+  }
+};
 
 // Crear un nuevo producto
 export const createProduct = async (productData) => {

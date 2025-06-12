@@ -18,13 +18,14 @@ const OrdersDashboard = ({ orders }) => {
     setPendingOrders(prev => prev.filter(order => order.orderId !== orderId));
   };
 
+  // Agrupar pedidos por fecha para calcular la cantidad de pedidos
   const dailyData = orders.reduce((acc, order) => {
     const day = order.orderDate;
-    acc[day] = (acc[day] || 0) + order.totalPrice;
+    acc[day] = (acc[day] || 0) + 1; // Contar el pedido
     return acc;
   }, {});
 
-  const chartData = Object.entries(dailyData).map(([date, total]) => ({ date, total }));
+  const chartData = Object.entries(dailyData).map(([date, orderCount]) => ({ date, orderCount }));
 
   return (
     <Grid container spacing={2}>
@@ -33,9 +34,9 @@ const OrdersDashboard = ({ orders }) => {
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
             <XAxis dataKey="date" />
-            <YAxis />
+            <YAxis label={{ value: "Cantidad de pedidos", angle: -90, position: "insideLeft" }} />
             <Tooltip />
-            <Bar dataKey="total" fill="#8884d8" onClick={(data) => setSelectedDate(data.date)} />
+            <Bar dataKey="orderCount" fill="#8884d8" onClick={(data) => setSelectedDate(data.date)} />
           </BarChart>
         </ResponsiveContainer>
       </Grid>

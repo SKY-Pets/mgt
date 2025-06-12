@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [ordersPending, setOrdersPending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState(dayjs().subtract(1, "month").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
@@ -28,7 +29,8 @@ const Home = () => {
     Promise.all([getProducts(), getOrders(), filterOrders(startDate, endDate, "pending")])
       .then(([productData, orderData, orderDataFilter]) => {
         setProducts(productData);
-        setOrders(orderDataFilter);
+        setOrders(orderData);
+        setOrdersPending(orderDataFilter);
       })
       .catch((err) => console.error("Error fetching data:", err))
       .finally(() => setLoading(false));
@@ -79,7 +81,7 @@ const Home = () => {
             </Box>
             <OrdersDashboard orders={orders} />
           </Box>
-          <PendingOrders orders={orders} />
+          <PendingOrders orders={ordersPending} />
           <Divider />
           <Box sx={{ marginTop: 4 }}>
             <Typography variant="h4" gutterBottom>

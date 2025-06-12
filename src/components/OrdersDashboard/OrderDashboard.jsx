@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, Typography, Button, Grid, List, ListItem, ListItemText, Checkbox } from "@mui/material";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { markOrderAsDelivered } from "../../api/api";
 
 const OrdersDashboard = ({ orders }) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10)); // Fecha actual
@@ -15,8 +16,19 @@ const OrdersDashboard = ({ orders }) => {
   }, [orders, selectedDate]);
 
   const markAsDelivered = (orderId) => {
-    setPendingOrders(prev => prev.filter(order => order.orderId !== orderId));
+    markOrderAsDelivered(orderId)
+      .then(() => {
+        const updatedOrders = filteredOrders.map(order => {
+          if (order.id === orderId) {
+            return { ...order, status: "entregado" };
+          }
+          return order;
+        });
+        setFilteredOrders(updatedOrders);
+      })
+      .catch(err => console.error("Error al actualizar el pedido:", err)); // Manejar el error si es necesario
   };
+  
 
   // Agrupar pedidos por fecha para calcular la cantidad de pedidos
   const dailyData = orders.reduce((acc, order) => {
@@ -44,11 +56,11 @@ const OrdersDashboard = ({ orders }) => {
       <Grid item xs={12}>
         <Card>
           <CardContent>
-            <Typography variant="h6">Pedidos no entregados</Typography>
+            
             <List>
               {pendingOrders.map((order) => (
-                <ListItem key={order.orderId} disablePadding>
-                  <Checkbox onClick={() => markAsDelivered(order.orderId)} />
+                <ListItem key={order.orderId+99} disablePadding>
+                  <Checkbox onClick={() => markAsDelivered(order.id)} />
                   <ListItemText
                     primary={`Pedido #${order.orderId} - ${order.customerName}`}
                     secondary={`Total: $${order.totalPrice}`}

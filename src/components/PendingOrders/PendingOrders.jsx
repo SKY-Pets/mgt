@@ -29,7 +29,7 @@ const PendingOrders = ({ orders }) => {
                <Typography>
                 <strong>{order.orderDate}</strong> {order.orderDni}
               </Typography>
-              <Chip key={order.id} label="Pendiente" color="info"  sx={{ marginBottom: 2 }} />
+              <Chip key={order.id+77} label="Pendiente" color="info"  sx={{ marginBottom: 2 }} />
               <Chip key={order.id} label={order.delivery='retiro'? 'Retira' : 'Envio Domicilio'} color={order.delivery='retiro'? 'warning' : 'info'} sx={{ marginBottom: 2 }} />
               <Typography>
                 <strong>{order.customerName}</strong>  <strong>{order.customerEmail}</strong> 
@@ -67,7 +67,7 @@ const PendingOrders = ({ orders }) => {
                 {order.items.map((item, index) => (
                   <ListItem key={index} disableGutters>
                     <ListItemText
-                      primary={`|${item.productId}-${item.productName}| $ ${item.price}`}
+                      primary={`|${item.productId}#${item.name}| $ ${item.price}`}
                       secondary={`Cantidad: ${item.quantity}`}
                     />
                   </ListItem>

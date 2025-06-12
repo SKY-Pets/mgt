@@ -102,7 +102,7 @@ export const getOrders = async () => {
 // Actualizar un pedido como entregado
 export const markOrderAsDelivered = async (orderId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+    const response = await fetch(`${API_BASE_URL}/orders/id/${orderId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

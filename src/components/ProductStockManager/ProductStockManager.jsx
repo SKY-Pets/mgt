@@ -15,8 +15,12 @@ import {
   IconButton,
   Switch,
   FormControlLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import { Edit, Delete, CameraAlt } from "@mui/icons-material";
+import ProductImageManager from "../ProductImageManager/ProductImageManager"; // Importa tu componente de gestión de imágenes
 
 const ProductStockManager = ({ initialProducts }) => {
   const [products, setProducts] = useState(initialProducts);
@@ -29,10 +33,24 @@ const ProductStockManager = ({ initialProducts }) => {
     presentation: "",
     details: "",
   });
+  const [editingId, setEditingId] = useState(null);
+  const [openImageManager, setOpenImageManager] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const handleAddProduct = () => {
+  const handleAddOrEditProduct = () => {
     if (newProduct.name && newProduct.price) {
-      setProducts([...products, { ...newProduct, id: Date.now() }]);
+      if (editingId) {
+        // Actualizar producto
+        setProducts(
+          products.map((product) =>
+            product.id === editingId ? { ...newProduct, id: editingId } : product
+          )
+        );
+        setEditingId(null);
+      } else {
+        // Agregar nuevo producto
+        setProducts([...products, { ...newProduct, id: Date.now() }]);
+      }
       setNewProduct({
         id: "",
         name: "",
@@ -48,11 +66,24 @@ const ProductStockManager = ({ initialProducts }) => {
   };
 
   const handleDeleteProduct = (id) => {
-    setProducts(products.filter((product) => product.id !== id));
+    if (window.confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+      setProducts(products.filter((product) => product.id !== id));
+    }
   };
 
-  const handleUpdateProduct = (id, updatedProduct) => {
-    setProducts(products.map((product) => (product.id === id ? updatedProduct : product)));
+  const handleEditProduct = (product) => {
+    setNewProduct(product);
+    setEditingId(product.id);
+  };
+
+  const handleOpenImageManager = (product) => {
+    setSelectedProduct(product);
+    setOpenImageManager(true);
+  };
+
+  const handleCloseImageManager = () => {
+    setOpenImageManager(false);
+    setSelectedProduct(null);
   };
 
   return (
@@ -115,8 +146,8 @@ const ProductStockManager = ({ initialProducts }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Button fullWidth variant="contained" onClick={handleAddProduct}>
-              Agregar Producto
+            <Button fullWidth variant="contained" onClick={handleAddOrEditProduct}>
+              {editingId ? "Actualizar Producto" : "Agregar Producto"}
             </Button>
           </Grid>
         </Grid>
@@ -144,15 +175,14 @@ const ProductStockManager = ({ initialProducts }) => {
                   <TableCell>{product.presentation}</TableCell>
                   <TableCell>{product.details}</TableCell>
                   <TableCell>
-                    <IconButton
-                      onClick={() =>
-                        handleUpdateProduct(product.id, { ...product, name: "Nombre Actualizado" })
-                      }
-                    >
+                    <IconButton onClick={() => handleEditProduct(product)}>
                       <Edit />
                     </IconButton>
                     <IconButton onClick={() => handleDeleteProduct(product.id)}>
                       <Delete />
+                    </IconButton>
+                    <IconButton onClick={() => handleOpenImageManager(product)}>
+                      <CameraAlt />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -161,6 +191,25 @@ const ProductStockManager = ({ initialProducts }) => {
           </Table>
         </TableContainer>
       </CardContent>
+
+      <Dialog open={openImageManager} onClose={handleCloseImageManager} maxWidth="md" fullWidth>
+        <DialogTitle>Gestión de Imágenes</DialogTitle>
+        <DialogContent>
+          {selectedProduct && (
+            <ProductImageManager
+              product={selectedProduct}
+              onClose={handleCloseImageManager}
+              onUpdate={(updatedImages) =>
+                setProducts((prevProducts) =>
+                  prevProducts.map((p) =>
+                    p.id === selectedProduct.id ? { ...p, images: updatedImages } : p
+                  )
+                )
+              }
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

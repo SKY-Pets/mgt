@@ -12,7 +12,7 @@ const uploadImage = async (file, profileUid, petName) => {
     }
 
     return new Promise((resolve, reject) => {
-        const imageRef = ref(storage, `patitas_images/${petName}_${profileUid}/${file.name}`);
+        const imageRef = ref(storage, `skypets_images/${petName}_${profileUid}/${file.name}`);
         const uploadTask = uploadBytesResumable(imageRef, file);
 
         uploadTask.on(

@@ -1,31 +1,12 @@
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  TextField,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  IconButton,
-  Switch,
-  FormControlLabel,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {Card,CardContent,  Typography,  Button,  TextField,  Grid,  Table,  TableBody,  TableCell,  TableContainer,  TableHead,  TableRow,  IconButton,  Switch,  FormControlLabel,  Dialog,  DialogActions,  DialogTitle,  DialogContent,} from "@mui/material";
 import { Edit, Delete, CameraAlt } from "@mui/icons-material";
-import ProductImageManager from "../ProductImageManager/ProductImageManager"; // Importa tu componente de gestión de imágenes
+import ProductImageManager from "../ProductImageManager/ProductImageManager";
+import { getProducts, createProduct, updateProduct, deleteProduct } from "../../api/api";
 
-const ProductStockManager = ({ initialProducts }) => {
-  const [products, setProducts] = useState(initialProducts);
+const ProductStockManager = () => {
+  const [products, setProducts] = useState([]);
   const [newProduct, setNewProduct] = useState({
-    id: "",
     name: "",
     price: "",
     stock: false,
@@ -36,38 +17,64 @@ const ProductStockManager = ({ initialProducts }) => {
   const [editingId, setEditingId] = useState(null);
   const [openImageManager, setOpenImageManager] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  const handleAddOrEditProduct = () => {
-    if (newProduct.name && newProduct.price) {
-      if (editingId) {
-        // Actualizar producto
-        setProducts(
-          products.map((product) =>
-            product.id === editingId ? { ...newProduct, id: editingId } : product
-          )
-        );
-        setEditingId(null);
-      } else {
-        // Agregar nuevo producto
-        setProducts([...products, { ...newProduct, id: Date.now() }]);
+const fetchProducts = async () => {
+      try {
+        const products = await getProducts();
+        setProducts(products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
       }
-      setNewProduct({
-        id: "",
-        name: "",
-        price: "",
-        stock: false,
-        instructions: "",
-        presentation: "",
-        details: "",
-      });
+    };
+  useEffect(() => {
+    // Cargar los productos al montar el componente
+    
+    fetchProducts();
+  }, []);
+
+  const handleAddOrEditProduct = async () => {
+    if (newProduct.name && newProduct.price) {
+      try {
+        if (editingId) {
+          // Actualizar producto
+          const updatedProduct = await updateProduct(editingId, newProduct);
+          setProducts((prevProducts) =>
+            prevProducts.map((product) =>
+              product.id === editingId ? updatedProduct : product
+            )
+          );
+        } else {
+          // Crear nuevo producto
+          const createdProduct = await createProduct(newProduct);
+
+          fetchProducts()
+        }
+        setNewProduct({
+          name: "",
+          price: "",
+          stock: false,
+          instructions: "",
+          presentation: "",
+          details: "",
+        });
+        setEditingId(null);
+      } catch (error) {
+        console.error("Error saving product:", error);
+      }
     } else {
       alert("Por favor completa todos los campos obligatorios.");
     }
   };
 
-  const handleDeleteProduct = (id) => {
+  const handleDeleteProduct = async (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-      setProducts(products.filter((product) => product.id !== id));
+      try {
+        await deleteProduct(id);
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product.id !== id)
+        );
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      }
     }
   };
 
@@ -98,7 +105,9 @@ const ProductStockManager = ({ initialProducts }) => {
               fullWidth
               label="Nombre del Producto"
               value={newProduct.name}
-              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+              onChange={(e) =>
+                setNewProduct({ ...newProduct, name: e.target.value })
+              }
             />
           </Grid>
           <Grid item xs={6}>
@@ -107,7 +116,9 @@ const ProductStockManager = ({ initialProducts }) => {
               label="Precio"
               value={newProduct.price}
               type="number"
-              onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+              onChange={(e) =>
+                setNewProduct({ ...newProduct, price: e.target.value })
+              }
             />
           </Grid>
           <Grid item xs={6}>
@@ -115,7 +126,9 @@ const ProductStockManager = ({ initialProducts }) => {
               control={
                 <Switch
                   checked={newProduct.stock}
-                  onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.checked })}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, stock: e.target.checked })
+                  }
                 />
               }
               label="En Stock"
@@ -126,7 +139,9 @@ const ProductStockManager = ({ initialProducts }) => {
               fullWidth
               label="Instrucciones"
               value={newProduct.instructions}
-              onChange={(e) => setNewProduct({ ...newProduct, instructions: e.target.value })}
+              onChange={(e) =>
+                setNewProduct({ ...newProduct, instructions: e.target.value })
+              }
             />
           </Grid>
           <Grid item xs={12}>
@@ -134,7 +149,9 @@ const ProductStockManager = ({ initialProducts }) => {
               fullWidth
               label="Presentación"
               value={newProduct.presentation}
-              onChange={(e) => setNewProduct({ ...newProduct, presentation: e.target.value })}
+              onChange={(e) =>
+                setNewProduct({ ...newProduct, presentation: e.target.value })
+              }
             />
           </Grid>
           <Grid item xs={12}>
@@ -142,7 +159,9 @@ const ProductStockManager = ({ initialProducts }) => {
               fullWidth
               label="Detalles"
               value={newProduct.details}
-              onChange={(e) => setNewProduct({ ...newProduct, details: e.target.value })}
+              onChange={(e) =>
+                setNewProduct({ ...newProduct, details: e.target.value })
+              }
             />
           </Grid>
           <Grid item xs={12}>
@@ -202,7 +221,9 @@ const ProductStockManager = ({ initialProducts }) => {
               onUpdate={(updatedImages) =>
                 setProducts((prevProducts) =>
                   prevProducts.map((p) =>
-                    p.id === selectedProduct.id ? { ...p, images: updatedImages } : p
+                    p.id === selectedProduct.id
+                      ? { ...p, images: updatedImages }
+                      : p
                   )
                 )
               }

@@ -39,7 +39,7 @@ const ProductImageManager = ({ product }) => {
     setIsUploading(true);
 
     try {
-      const profileUid = "user123"; // Reemplazar con el ID del usuario o perfil actual.
+      const profileUid = "mgt"; // Reemplazar con el ID del usuario o perfil actual.
       const uploadedUrl = await uploadImage(newImage, profileUid, product.name);
       const updatedImages = [...images, uploadedUrl];
       setImages(updatedImages);
@@ -56,8 +56,8 @@ const ProductImageManager = ({ product }) => {
   const handleImageDelete = async (imageUrl) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta imagen?")) {
       try {
-        const filePath = imageUrl.split("/patitas_images/")[1]; // Ajustar si la estructura del path cambia.
-        await deleteImage(`patitas_images/${filePath}`);
+        const filePath = imageUrl.split("/skypets_images/")[1]; // Ajustar si la estructura del path cambia.
+        await deleteImage(`skypets_images/${filePath}`);
         const updatedImages = images.filter((img) => img !== imageUrl);
         setImages(updatedImages);
         await updateProductImages(updatedImages);

@@ -3,14 +3,14 @@ import { Card, CardContent, Typography, Button, Grid, List, ListItem, ListItemTe
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { updateOrderStatus } from "../../api/api";
 
-const OrdersDashboard = ({ orders }) => {
+const OrdersDashboard = ({ orders , ordersPending }) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10)); // Fecha actual
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [pendingOrders, setPendingOrders] = useState([]);
 
   useEffect(() => {
     const dateFiltered = orders.filter(order => order.orderDate === selectedDate);
-    const pending = orders.filter(order => order.status === "pending");
+    const pending = ordersPending;
     setFilteredOrders(dateFiltered);
     setPendingOrders(pending);
   }, [orders, selectedDate]);

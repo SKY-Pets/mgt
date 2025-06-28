@@ -26,7 +26,7 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     // Fetch products and orders
-    Promise.all([getProducts(), filterOrders(startDate, endDate), filterOrders(startDate, endDate, "pending")])
+    Promise.all([getProducts(), getOrders(), filterOrders(startDate, endDate, "pending")])
       .then(([productData, orderData, orderDataFilter]) => {
         setProducts(productData);
         setOrders(orderData);
@@ -79,7 +79,7 @@ const Home = () => {
                 Filtrar
               </Button>
             </Box>
-            <OrdersDashboard orders={orders} />
+            <OrdersDashboard orders={orders} ordersPending={ordersPending} />
           </Box>
           <PendingOrders orders={ordersPending} />
           <Divider />

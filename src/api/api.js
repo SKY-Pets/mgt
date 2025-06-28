@@ -18,7 +18,7 @@ export const getProducts = async () => {
 export const filterOrders = async (startDate, endDate, status) => {
   try {
     const response = await fetch(
-      status != "" ? `${API_BASE_URL}/orders/filter?startDate=${startDate}&endDate=${endDate}` : `${API_BASE_URL}/orders/filter?startDate=${startDate}&endDate=${endDate}`
+      status != "" ? `${API_BASE_URL}/orders/filter?startDate=${startDate}&endDate=${endDate}&status=${status}` : `${API_BASE_URL}/orders/filter?startDate=${startDate}&endDate=${endDate}`
     );
     if (!response.ok) {
       throw new Error(`Error fetching filtered orders: ${response.statusText}`);
@@ -101,14 +101,14 @@ export const getOrders = async () => {
 };
 
 // Actualizar el estado de un pedido
-export const updateOrderStatus = async (orderId, status) => {
+export const updateOrderStatus = async (orderId, pStatus) => {
   try {
     const response = await fetch(`${API_BASE_URL}/orders/id/${orderId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ estado: status }),
+      body: JSON.stringify({ status: pStatus }),
     });
     if (!response.ok) {
       throw new Error(`Error updating order status: ${response.statusText}`);
